@@ -148,7 +148,7 @@ class MHData:
 
     def plot_all_scalar_slices(self, filename, cut_val, normal='z'):
         """Plots 2D colour map cross-sections for all scalars available for
-        plotting on the mesh. Results are saved into a single pdf
+        plotting on the mesh. Results are saved into a single PDF
 
         Args:
             filename (str): path and filename to save figure to. Must be .pdf file
@@ -162,8 +162,9 @@ class MHData:
 
                 self.plotter.add_text(scalar, position='upper_edge', color='black', font_size=12)
                 figure = self.plotter.screenshot(filename=None)
+                height, width, _ = figure.shape
 
-                fig, ax = plt.subplots(figsize=(8, 6))
+                fig, ax = plt.subplots(figsize=(width/100, height/100), dpi=100)
 
                 ax.imshow(figure)
                 ax.axis('off')
