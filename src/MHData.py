@@ -7,6 +7,8 @@ visualization functionality.
 
 import numpy as np
 import pyvista as pv
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 class MHData:
     """Class for parsing and plotting VTK files from MHD simulations.
@@ -123,6 +125,7 @@ class MHData:
             cut_val (float): value of the normal to cut along
             normal (literal): normal direction to take cross-section from: 'x','y','z'
         """
+        self.plot()
 
         cut_mesh = self.data.slice(normal=normal, origin={
             'x': (cut_val, 0, 0),
@@ -141,6 +144,33 @@ class MHData:
         }[normal]
 
         self.plotter.camera.tight(padding=0.4)
+
+
+    def plot_all_scalar_slices(self, filename, cut_val, normal='z'):
+        """Plots 2D colour map cross-sections for all scalars available for
+        plotting on the mesh. Results are saved into a single pdf
+
+        Args:
+            filename (str): path and filename to save figure to. Must be .pdf file
+            cut_val (float): value of the normal to cut along
+            normal (literal): normal direction to take cross-section from: 'x','y','z'
+        """
+
+        with PdfPages(filename) as pdf:
+            for scalar in self.scalar_values()['point']:
+                self.plot_2d_colour_map(scalar, cut_val, normal)
+
+                self.plotter.add_text(scalar, position='upper_edge', color='black', font_size=12)
+                figure = self.plotter.screenshot(filename=None)
+
+                fig, ax = plt.subplots(figsize=(8, 6))
+
+                ax.imshow(figure)
+                ax.axis('off')
+
+                pdf.savefig(fig)
+                plt.close(fig)
+
 
 
 
