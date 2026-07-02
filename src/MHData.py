@@ -104,6 +104,17 @@ class MHData:
         self.plotter.show()
 
 
+    def save_fig(self, filename, fig_title=None):
+        """Save MHData plot as figure
+
+        Args:
+            filename (str): path and filename to save figure to
+            fig_title (str): title to display on figure
+        """
+        self.plotter.add_text(fig_title, position='upper_edge', color='black', font_size=12)
+        self.plotter.screenshot(filename)
+
+
     def plot_2d_colour_map(self, scalar,  cut_val, normal='z'):
         """Plots 2D colour map cross-section for the specified scalar value.
 
@@ -120,7 +131,16 @@ class MHData:
         }[normal])
         cut_mesh.set_active_scalars(scalar)
 
-        self.plotter.add_mesh(cut_mesh, show_edges=True)
+        self.plotter.add_mesh(cut_mesh, show_edges=True, show_scalar_bar=False)
+        self.plotter.add_scalar_bar(title=scalar, height=0.9, position_x=0.9, vertical=True)
+
+        self.plotter.camera_position = {
+            'x': 'yz',
+            'y': 'xz',
+            'z': 'xy',
+        }[normal]
+
+        self.plotter.camera.tight(padding=0.4)
 
 
 
