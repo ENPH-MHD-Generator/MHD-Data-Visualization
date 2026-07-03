@@ -157,7 +157,7 @@ class MHData:
         """
 
         with PdfPages(filename) as pdf:
-            for scalar in self.scalar_values()['point']:
+            for scalar in self.scalar_values()['cell']:
                 self.plot_2d_colour_map(scalar, cut_val, normal)
 
                 self.plotter.add_text(scalar, position='upper_edge', color='black', font_size=12)
@@ -171,6 +171,38 @@ class MHData:
 
                 pdf.savefig(fig)
                 plt.close(fig)
+
+
+    def calculate_hall_parameter(self, ionization_fraction):
+        """Calculates approximate local hall parameter and saves it to the mesh as a scalar
+
+        Args:
+            ionization_fraction (float): ionization fraction of the plasma
+        """
+
+        f = ionization_fraction
+        temp = self.data.cell_data['T']
+        B = self.data.cell_data['Bz']
+        pressure = self.data.cell_data['p']
+
+        C1 = 1.44 * 10**4 # guessed value
+        C2 = 1.22 * 10**5 # guessed value
+
+        num = B * (1 + f) * temp
+        denom = pressure * ((1 - f) * np.sqrt(temp) * C1 + f * C2 / temp)
+
+        beta = num / denom # gemini suggested formula, check this
+
+        self.data.cell_data['hall'] = beta
+
+        return
+
+
+
+
+
+
+
 
 
 
