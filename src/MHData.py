@@ -96,7 +96,7 @@ class MHData:
         """Create a new plotter object
 
         """
-        self.plotter = pv.Plotter()
+        self.plotter = pv.Plotter(off_screen=True)
 
 
     def show(self):
